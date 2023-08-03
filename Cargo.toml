@@ -1,10 +1,14 @@
 [package]
 name = "terminal-prompt"
+version = "0.1.0"
 description = "Tiny library for prompting sensitive or unsensitive data on the terminal"
+license = "BSD-2-Clause"
+license-file = "LICENSE.md"
+
 authors = ["Maarten de Vries <maarten@de-vri.es>"]
 repository = "https://github.com/de-vri-es/terminal-prompt-rs"
 docs = "https://docs.rs/terminal-prompt"
-version = "0.1.0"
+
 edition = "2021"
 
 [target.'cfg(unix)'.dependencies]
