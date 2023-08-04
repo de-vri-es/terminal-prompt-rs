@@ -1,6 +1,6 @@
 [package]
 name = "terminal-prompt"
-version = "0.1.0"
+version = "0.2.0"
 description = "Tiny library for prompting sensitive or non-sensitive data on the terminal"
 license = "BSD-2-Clause"
 

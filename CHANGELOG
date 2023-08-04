@@ -1,4 +1,4 @@
-# Unreleased
+# Version 0.2.0 - 2023-08-04
 - [rename][major] Rename `TerminalPrompter` to `Terminal`.
 - [rename][major] Rename `read_line()` to `read_input_line()`.
 - [add][minor] Implement `BufRead` for `Terminal`.
