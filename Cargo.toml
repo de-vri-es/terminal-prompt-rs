@@ -1,12 +1,15 @@
 [package]
 name = "terminal-prompt"
 version = "0.1.0"
-description = "Tiny library for prompting sensitive or unsensitive data on the terminal"
+description = "Tiny library for prompting sensitive or non-sensitive data on the terminal"
 license = "BSD-2-Clause"
 
 authors = ["Maarten de Vries <maarten@de-vri.es>"]
 repository = "https://github.com/de-vri-es/terminal-prompt-rs"
 documentation = "https://docs.rs/terminal-prompt"
+
+keywords = ["terminal", "console", "prompt", "input", "tty"]
+categories = ["command-line-interfaces", "os"]
 
 edition = "2021"
 
