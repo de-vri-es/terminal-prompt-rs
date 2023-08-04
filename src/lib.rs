@@ -5,7 +5,6 @@ mod sys;
 pub struct Terminal {
 	terminal: BufReader<sys::Terminal>,
 	initial_mode: sys::TerminalMode,
-	current_mode: sys::TerminalMode,
 }
 
 impl Terminal {
@@ -13,35 +12,41 @@ impl Terminal {
 		let terminal = sys::Terminal::open()?;
 		let initial_mode = terminal.get_terminal_mode()?;
 
-		let mut current_mode = initial_mode;
-		current_mode.enable_line_editing();
-		terminal.set_terminal_mode(&current_mode)?;
+		// Enable line editing mode.
+		let mut mode = initial_mode;
+		mode.enable_line_editing();
+		terminal.set_terminal_mode(&mode)?;
 
 		Ok(Self {
 			terminal: BufReader::new(terminal),
 			initial_mode,
-			current_mode: initial_mode,
 		})
 	}
 
-	pub fn is_echo_enabled(&self) -> bool {
-		self.current_mode.is_echo_enabled()
+	pub fn is_echo_enabled(&self) -> std::io::Result<bool> {
+		let mode = self.terminal.get_ref().get_terminal_mode()?;
+		Ok(mode.is_echo_enabled())
 	}
 
-	pub fn disable_echo(&mut self) -> std::io::Result<()> {
-		self.current_mode.disable_echo();
-		self.terminal.get_ref().set_terminal_mode(&self.current_mode)
+	pub fn disable_echo(&self) -> std::io::Result<()> {
+		let mut mode = self.terminal.get_ref().get_terminal_mode()?;
+		mode.disable_echo();
+		self.terminal.get_ref().set_terminal_mode(&mode)?;
+		Ok(())
 	}
 
 	pub fn enable_echo(&mut self) -> std::io::Result<()> {
-		self.current_mode.enable_echo();
-		self.terminal.get_ref().set_terminal_mode(&self.current_mode)
+		let mut mode = self.terminal.get_ref().get_terminal_mode()?;
+		mode.enable_echo();
+		self.terminal.get_ref().set_terminal_mode(&mode)?;
+		Ok(())
 	}
 
 	pub fn read_line(&mut self) -> std::io::Result<String> {
 		let mut buffer = String::new();
 		self.terminal.read_line(&mut buffer)?;
-		if !self.current_mode.is_echo_enabled() {
+
+		if self.is_echo_enabled().unwrap_or(false) {
 			writeln!(self).ok();
 		}
 		if buffer.ends_with('\n') {
@@ -56,12 +61,16 @@ impl Terminal {
 	}
 
 	pub fn prompt_sensitive(&mut self, prompt: impl std::fmt::Display) -> std::io::Result<String> {
-		let echo = self.is_echo_enabled();
-		self.disable_echo()?;
+		let old_mode = self.terminal.get_ref().get_terminal_mode()?;
+		if old_mode.is_echo_enabled() {
+			let mut new_mode = old_mode;
+			new_mode.disable_echo();
+			self.terminal.get_ref().set_terminal_mode(&new_mode)?;
+		}
 		write!(self, "{prompt}")?;
 		let line = self.read_line();
-		if echo {
-			self.enable_echo().ok();
+		if old_mode.is_echo_enabled() {
+			self.terminal.get_ref().set_terminal_mode(&old_mode).ok();
 		}
 		line
 	}
