@@ -4,6 +4,7 @@
 - [add][minor] Implement `BufRead` for `Terminal`.
 - [change][minor] Try `sterr`, `stdin`, `stdout` and `/dev/tty` in that order on Unix.
 - [change][minor] Do not cache the terminal mode, retrieve it every time when needed.
+- [add][minor] Add documentation.
 
 # Version 0.1.0 - 2023-08-03
 - [add][minor] Initial release.
