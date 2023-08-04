@@ -2,13 +2,13 @@ use std::io::{BufReader, BufRead, Read, Write};
 
 mod sys;
 
-pub struct TerminalPrompter {
+pub struct Terminal {
 	terminal: BufReader<sys::Terminal>,
 	initial_mode: sys::TerminalMode,
 	current_mode: sys::TerminalMode,
 }
 
-impl TerminalPrompter {
+impl Terminal {
 	pub fn open() -> std::io::Result<Self> {
 		let terminal = sys::Terminal::open()?;
 		let initial_mode = terminal.get_terminal_mode()?;
@@ -67,13 +67,13 @@ impl TerminalPrompter {
 	}
 }
 
-impl Drop for TerminalPrompter {
+impl Drop for Terminal {
 	fn drop(&mut self) {
 		self.terminal.get_ref().set_terminal_mode(&self.initial_mode).ok();
 	}
 }
 
-impl Read for TerminalPrompter {
+impl Read for Terminal {
 	fn read(&mut self, buf: &mut [u8]) -> std::io::Result<usize> {
 		self.terminal.read(buf)
 	}
@@ -83,7 +83,7 @@ impl Read for TerminalPrompter {
 	}
 }
 
-impl Write for TerminalPrompter {
+impl Write for Terminal {
 	fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
 		self.terminal.get_mut().write(buf)
 	}
