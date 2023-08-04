@@ -1,4 +1,4 @@
-# Unreleased
+# Version 0.2.1 - 2023-08-04
 - [change][patch] Fix category slug in `Cargo.toml`.
 
 # Version 0.2.0 - 2023-08-04
