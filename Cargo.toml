@@ -11,6 +11,7 @@ documentation = "https://docs.rs/terminal-prompt"
 keywords = ["terminal", "console", "prompt", "input", "tty"]
 categories = ["command-line-interfaces", "os"]
 
+publish = ["crates-io"]
 edition = "2021"
 
 [target.'cfg(unix)'.dependencies]
