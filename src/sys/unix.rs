@@ -1,10 +1,15 @@
 use std::fs::File;
 use std::mem::ManuallyDrop;
+use std::os::fd::RawFd;
 use std::os::unix::io::{AsFd, AsRawFd, FromRawFd};
 use std::io::{IsTerminal, Read, Write};
 
+/// Unix handle to an open terminal.
 pub enum Terminal {
-	Stdin(ManuallyDrop<File>),
+	/// Non-owning file for one of the standard I/O streams.
+	Stdio(ManuallyDrop<File>),
+
+	/// Owned file for `/dev/tty`.
 	File(File),
 }
 
@@ -15,9 +20,12 @@ pub struct TerminalMode {
 
 impl Terminal {
 	pub fn open() -> std::io::Result<Self> {
-		let stdin = unsafe { ManuallyDrop::new(File::from_raw_fd(0)) };
-		if stdin.is_terminal() {
-			Ok(Self::Stdin(stdin))
+		if let Some(terminal) = open_fd_terminal(2) {
+			Ok(terminal)
+		} else if let Some(terminal) = open_fd_terminal(0) {
+			Ok(terminal)
+		} else if let Some(terminal) = open_fd_terminal(1) {
+			Ok(terminal)
 		} else {
 			let file = std::fs::OpenOptions::new()
 				.read(true)
@@ -52,9 +60,18 @@ impl Terminal {
 
 	fn as_file(&self) -> &File {
 		match self {
-			Self::Stdin(io) => io,
+			Self::Stdio(io) => io,
 			Self::File(io) => io,
 		}
+	}
+}
+
+fn open_fd_terminal(fd: RawFd) -> Option<Terminal> {
+	let file = unsafe { ManuallyDrop::new(File::from_raw_fd(fd)) };
+	if file.is_terminal() {
+		Some(Terminal::Stdio(file))
+	} else {
+		None
 	}
 }
 
@@ -89,7 +106,7 @@ fn check_ret(input: i32) -> std::io::Result<()> {
 impl AsFd for Terminal {
 	fn as_fd(&self) -> std::os::fd::BorrowedFd<'_> {
 		match self {
-			Self::Stdin(stdin) => stdin.as_fd(),
+			Self::Stdio(stdin) => stdin.as_fd(),
 			Self::File(file) => file.as_fd(),
 		}
 	}

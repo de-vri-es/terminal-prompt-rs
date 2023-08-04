@@ -1,5 +1,6 @@
 # Unreleased
 - [rename][major] Rename `TerminalPrompter` to `Terminal`.
+- [change][minor] Try `sterr`, `stdin`, `stdout` and `/dev/tty` in that order on Unix.
 
 # Version 0.1.0 - 2023-08-03
 - [add][minor] Initial release.
