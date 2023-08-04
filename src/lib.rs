@@ -42,7 +42,7 @@ impl Terminal {
 		Ok(())
 	}
 
-	pub fn read_line(&mut self) -> std::io::Result<String> {
+	pub fn read_input_line(&mut self) -> std::io::Result<String> {
 		let mut buffer = String::new();
 		self.terminal.read_line(&mut buffer)?;
 
@@ -57,7 +57,7 @@ impl Terminal {
 
 	pub fn prompt(&mut self, prompt: impl std::fmt::Display) -> std::io::Result<String> {
 		write!(self, "{prompt}")?;
-		self.read_line()
+		self.read_input_line()
 	}
 
 	pub fn prompt_sensitive(&mut self, prompt: impl std::fmt::Display) -> std::io::Result<String> {
@@ -68,7 +68,7 @@ impl Terminal {
 			self.terminal.get_ref().set_terminal_mode(&new_mode)?;
 		}
 		write!(self, "{prompt}")?;
-		let line = self.read_line();
+		let line = self.read_input_line();
 		if old_mode.is_echo_enabled() {
 			self.terminal.get_ref().set_terminal_mode(&old_mode).ok();
 		}
