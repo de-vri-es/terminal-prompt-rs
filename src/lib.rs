@@ -92,6 +92,16 @@ impl Read for Terminal {
 	}
 }
 
+impl BufRead for Terminal {
+	fn fill_buf(&mut self) -> std::io::Result<&[u8]> {
+		self.terminal.fill_buf()
+	}
+
+	fn consume(&mut self, amt: usize) {
+		self.terminal.consume(amt)
+	}
+}
+
 impl Write for Terminal {
 	fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
 		self.terminal.get_mut().write(buf)

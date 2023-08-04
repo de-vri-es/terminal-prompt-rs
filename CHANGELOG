@@ -1,6 +1,7 @@
 # Unreleased
 - [rename][major] Rename `TerminalPrompter` to `Terminal`.
 - [rename][major] Rename `read_line()` to `read_input_line()`.
+- [add][minor] Implement `BufRead` for `Terminal`.
 - [change][minor] Try `sterr`, `stdin`, `stdout` and `/dev/tty` in that order on Unix.
 - [change][minor] Do not cache the terminal mode, retrieve it every time when needed.
 
