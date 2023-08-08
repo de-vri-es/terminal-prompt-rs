@@ -1,4 +1,4 @@
-# Unreleased
+# Version 0.2.2 - 2023-08-08
 - [fix][minor] Fix printing of newline in `Terminal::read_input_line()`.
 
 # Version 0.2.1 - 2023-08-04

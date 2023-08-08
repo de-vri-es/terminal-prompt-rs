@@ -10,7 +10,7 @@ checksum = "b4668fb0ea861c1df094127ac5f1da3409a82116a4ba74fca2e58ef927159bb3"
 
 [[package]]
 name = "terminal-prompt"
-version = "0.2.1"
+version = "0.2.2"
 dependencies = [
  "libc",
  "winapi",
