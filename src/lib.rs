@@ -110,7 +110,7 @@ impl Terminal {
 		let mut buffer = String::new();
 		self.terminal.read_line(&mut buffer)?;
 
-		if self.is_echo_enabled().unwrap_or(false) {
+		if self.is_echo_enabled().ok() == Some(false) {
 			writeln!(self).ok();
 		}
 		if buffer.ends_with('\n') {
