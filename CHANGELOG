@@ -1,4 +1,5 @@
 # Unreleased
+- [change][patch] Remove use of `IsTerminal` to support rust version 1.66 and up.
 - [change][patch] Declare minimum rust version in `Cargo.toml`.
 
 # Version 0.2.2 - 2023-08-08

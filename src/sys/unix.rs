@@ -1,8 +1,7 @@
 use std::fs::File;
+use std::io::{Read, Write};
 use std::mem::ManuallyDrop;
-use std::os::fd::RawFd;
-use std::os::unix::io::{AsFd, AsRawFd, FromRawFd};
-use std::io::{IsTerminal, Read, Write};
+use std::os::unix::io::{AsFd, AsRawFd, BorrowedFd, FromRawFd, RawFd};
 
 /// Unix handle to an open terminal.
 pub enum Terminal {
@@ -31,7 +30,7 @@ impl Terminal {
 				.read(true)
 				.write(true)
 				.open("/dev/tty")?;
-			if file.is_terminal() {
+			if is_terminal(file.as_fd()) {
 				Ok(Self::File(file))
 			} else {
 				Err(std::io::Error::from_raw_os_error(libc::ENOTTY))
@@ -68,7 +67,7 @@ impl Terminal {
 
 fn open_fd_terminal(fd: RawFd) -> Option<Terminal> {
 	let file = unsafe { ManuallyDrop::new(File::from_raw_fd(fd)) };
-	if file.is_terminal() {
+	if is_terminal(file.as_fd()) {
 		Some(Terminal::Stdio(file))
 	} else {
 		None
@@ -92,6 +91,12 @@ impl TerminalMode {
 
 	pub fn is_echo_enabled(&self) -> bool {
 		self.termios.c_lflag & libc::ECHO != 0
+	}
+}
+
+fn is_terminal(fd: BorrowedFd) -> bool {
+	unsafe {
+		libc::isatty(fd.as_raw_fd()) == 1
 	}
 }
 

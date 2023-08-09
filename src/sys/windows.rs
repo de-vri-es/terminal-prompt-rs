@@ -1,5 +1,5 @@
-use std::os::windows::io::AsRawHandle;
-use std::io::{IsTerminal, Read, Write};
+use std::io::{Read, Write};
+use std::os::windows::io::{AsHandle, AsRawHandle, BorrowedHandle};
 
 use winapi::um::consoleapi::{
 	GetConsoleMode,
@@ -26,10 +26,10 @@ impl Terminal {
 	pub fn open() -> std::io::Result<Self> {
 		let input = std::io::stdin();
 		let output = std::io::stderr();
-		if !input.is_terminal() {
+		if !is_terminal(input.as_handle()) {
 			return Err(std::io::Error::new(std::io::ErrorKind::Other, "stdin is not a terminal"));
 		}
-		if !output.is_terminal() {
+		if !is_terminal(output.as_handle()) {
 			return Err(std::io::Error::new(std::io::ErrorKind::Other, "stderr is not a terminal"));
 		}
 		Ok(Self {
@@ -74,6 +74,13 @@ impl TerminalMode {
 
 	pub fn is_echo_enabled(&self) -> bool {
 		self.input_mode & ENABLE_ECHO_INPUT != 0
+	}
+}
+
+fn is_terminal(handle: BorrowedHandle) -> bool {
+	unsafe {
+		let mut mode = 0;
+		GetConsoleMode(handle.as_raw_handle().cast(), &mut mode) != 0
 	}
 }
 

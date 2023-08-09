@@ -13,7 +13,7 @@ categories = ["command-line-interface", "os"]
 
 publish = ["crates-io"]
 edition = "2021"
-rust-version = "1.70"
+ rust-version = "1.66"
 
 [target.'cfg(unix)'.dependencies]
 libc = "0.2.147"
